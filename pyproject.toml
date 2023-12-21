@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "artist"
+version = "0.1.0"
+description = ""
+authors = ["Alexis Gaget <alexis.gaget@cea.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+graphviz = "^0.20.1"
+pyepics = "^3.5.2"
+
+[tool.poetry.scripts]
+artist = "artist.artist:main"
+
+[tool.ruff]
+select = ["ALL"]
+ignore = [
+  # one-blank-line-before-class
+  "D203",
+  # multi-line-summary-second-line
+  "D213",
+]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
