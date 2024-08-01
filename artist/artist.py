@@ -12,10 +12,11 @@ epics.ca.HAS_NUMPY = False
 class EVR:
     """to represent an EVR in python object."""
 
-    def __init__(self: "EVR", id_evr: str, type_evr: str) -> None:
+    def __init__(self: "EVR", id_evr: str, type_evr: str, desc: str) -> None:
         """Initialize EVR Class with the id and the type of the EVR."""
         self.id_evr = id_evr
         self.type_evr = type_evr
+        self.desc = desc
 
 
 class EVM:
@@ -37,10 +38,10 @@ def generate_mermaid_code(list_evrs: tuple, evm_ids: tuple) -> str:
         if evr.id_evr != 0:
             parent_id, port = divmod(evr.id_evr, 10)
             if parent_id == 0:
-                mermaid_code += f"  {parent_id}[EVM Master] <-->|Port {port}| {evr.id_evr}[{evr.type_evr}]\n"  # noqa: E501
+                mermaid_code += f"  {parent_id}[EVM Master] <-->|Port {port}| {evr.id_evr}[{evr.type_evr}\n{evr.desc}]\n"  # noqa: E501
             else:
                 mermaid_code += (
-                    f"  {parent_id} <-->|Port {port}| {evr.id_evr}[{evr.type_evr}]\n"
+                    f"  {parent_id} <-->|Port {port}| {evr.id_evr}[{evr.desc}]\n"
                 )
 
     for evm in evm_ids:
@@ -67,8 +68,13 @@ def separate_pvs(list_pvs: list) -> tuple:
             if value is not None:
                 pv_hw_type = pv_name + "HwType-I"
                 hw_type = epics.caget(pv_hw_type, timeout=2)
+                pv_desc = pv_name + "Label-I"
+                desc = epics.caget(pv_desc, timeout=2, as_string=True)
+                if desc == "":
+                    desc = pv_name
+
                 value = int(hex(value).replace("0x", ""))
-                evr = EVR(value, hw_type)
+                evr = EVR(value, hw_type, desc)
                 list_evr_pvs.append(evr)
             else:
                 pv_id = pv_name + "FCT-ID-I"
@@ -78,7 +84,7 @@ def separate_pvs(list_pvs: list) -> tuple:
                     evm = EVM(value)
                     list_evm_pvs.append(evm)
     except Exception:
-        logging.exception("PV %s : No such PV!",pv_name)
+        logging.exception("PV %s : No such PV!", pv_name)
 
     return list_evr_pvs, list_evm_pvs
 
