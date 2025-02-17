@@ -12,23 +12,8 @@ flowchart
   0[EVM Master] <-->|Port 3| 3[PCIe-EVR-300DC\n EVR3 PCI] 
   0[EVM Master] <-->|Port 2| 2[EVM Fanout]
 ```
-## Execution
-### Using Poetry
-To run the script from anywhere in the directory execute 
-``` bash
-poetry shell
-```
-Then you can call the script from anywhere
-``` bash
-spicer --PVs="Labo*" --host=myElasticSearchHost
-```
-### Using Binary
-If you have build the binardy you can 
-``` bash
-> cd dist
-> artist -h
-```
 
+## Installation
 ### using Poetry
 
 First, install Poetry.
@@ -42,6 +27,23 @@ poetry install
 poetry run build
 ```
 It is using PyInstaller to create a binary in **dist**
+
+## Execution
+### Using Poetry
+To run the script from anywhere in the directory execute 
+``` bash
+poetry shell
+```
+Then you can call the script from anywhere
+``` bash
+spicer --PVs="Labo*" --host=myElasticSearchHost
+```
+### Using Binary
+If you have build the binary you can 
+``` bash
+> cd dist
+> artist -h
+```
 
 ## Usage
  ```
