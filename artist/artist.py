@@ -35,6 +35,7 @@ def generate_mermaid_code(list_evrs: tuple, evm_ids: tuple) -> str:
     mermaid_code = "graph TD;\n"
 
     for evr in list_evrs:
+        print(evr.id_evr)
         if evr.id_evr != 0:
             parent_id, port = divmod(evr.id_evr, 10)
             if parent_id == 0:
@@ -117,9 +118,9 @@ def main() -> None:
     with Path.open(args.inputFile) as file:
         for line in file:
             list_pvs.append(line.strip().replace(" ", ""))
+            print(line.strip().replace(" ", ""))
 
     list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs)
-
     mermaid_code = generate_mermaid_code(list_evr_pvs, list_evm_pvs)
 
     logging.info("Code Mermaid generated:")
