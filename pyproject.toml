@@ -6,10 +6,12 @@ authors = ["Alexis Gaget <alexis.gaget@cea.fr>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.14"
+python = ">=3.8,<3.14"
 graphviz = "^0.20.1"
 pyepics = "^3.5.2"
 pyinstaller = "^6.12.0"
+wireviz = "^0.4.1"
+pyyaml = "^6.0.2"
 
 [tool.poetry.scripts]
 artist = "artist.artist:main"
@@ -22,8 +24,9 @@ ignore = [
   "D203",
   # multi-line-summary-second-line
   "D213",
+  #for python 2.6 compatibility
+  "PTH123"
 ]
-
 
 [build-system]
 requires = ["poetry-core"]

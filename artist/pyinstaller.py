@@ -1,5 +1,7 @@
-import PyInstaller.__main__
+import os
 from pathlib import Path
+
+import PyInstaller.__main__
 
 HERE = Path(__file__).parent.absolute()
 path_to_main = str(HERE / "artist.py")
@@ -9,5 +11,8 @@ def install():
         path_to_main,
         '--onefile',
         '--windowed',
-        # other pyinstaller options... 
+        '--hidden-import',
+        'epics.clibs',
+        '--add-binary',
+        'graphviz',
     ])
