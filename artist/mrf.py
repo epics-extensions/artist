@@ -100,7 +100,6 @@ class MTCAEVR300U(EVR):
 
         self.listFP=listFP
 
-
 class PCIEVR300(EVR):
     def __init__(
             self: "PCIEVR300",
@@ -180,7 +179,6 @@ def create_evr(pv_name: str) -> EVR:
         else:
             evr = EVR(pv_name,parent_id,port, desc)
         evr.def_frontpanel()
-
 
     return evr
 

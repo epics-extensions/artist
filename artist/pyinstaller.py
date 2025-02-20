@@ -9,6 +9,6 @@ def install():
         path_to_main,
         '--onefile',
         '--windowed',
-        '--hidden-import epics.clibs',
+        # '--hidden-import epics.clibs',
         # other pyinstaller options... 
     ])
