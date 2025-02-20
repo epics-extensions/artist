@@ -1,0 +1,91 @@
+# file: .gitlab-ci.yml
+# author: alexis.gaget@cea.fr
+# company: CEA / DRF / IRFU / LDISC
+# description: continuous integration for Artist
+
+variables:
+    DOCKER_AUTH_CONFIG: "{\"auths\":{\"ldisc-container-registry.extra.cea.fr\": {\"auth\": \"$CI_DOCKER_ARTIST\"}}}"
+
+default:
+    image: ldisc-container-registry.extra.cea.fr/iee-python
+    artifacts:
+        expire_in: 1 hour
+    tags:
+        - ldisc-gitlab-runner-for-epics-group  # any runner tagged with "ldisc-gitlab-runner-for-epics-group " might run this job
+    interruptible: true # Defines if a job can be canceled when made redundant by a newer run.
+
+stages:
+    - build
+    - deploy
+
+.job-commom:
+    script:
+        - pwd && ls -lh && uname -a
+        - 'echo "CI: ${CI-}"'
+        - echo "CI_JOB_TOKEN -> ${CI_JOB_TOKEN}"
+
+generate-new-executable:
+    stage: build
+    only:
+        - master
+    allow_failure: false
+    before_script:
+    # Installing necessary packages
+    - poetry install -v --no-root
+    - poetry shell
+    - poetry artist -h
+
+    script:
+    - poetry shell
+    - poetry run build
+
+    artifacts:
+        expire_in: 1 hour
+        paths:
+            # compilation output
+            - "./dist/artist"
+
+
+# push new executable
+push-new-executable:
+    stage: deploy
+    needs: [generate-new-executable]
+    rules:
+    - changes:
+        - artist/artist.py
+        - artist/mermaid.py
+        - artist/wireviz.py
+        - artist/mrf.py
+    script:
+        # deploy "latest" generic package to gitlab
+        - token_write_api=${CI_JOB_TOKEN-}
+        - project_id=2889
+        - package_name=artist
+        - package_version=latest
+        - file_name=${package_name}
+        - executable_path=./dist/${package_name}
+        - ${executable_path} -h # to make sure it runs
+        - 'curl --fail --header "JOB-TOKEN: ${token_write_api}" --upload-file ${executable_path} "https://drf-gitlab.cea.fr/api/v4/projects/${project_id}/packages/generic/${package_name}/${package_version}/${file_name}"'
+
+# fetch last executable
+fetch-last-executable:
+    stage: deploy
+    needs: [push-new-executable]
+    rules:
+    - changes:
+        - artist/artist.py
+        - artist/mermaid.py
+        - artist/wireviz.py
+        - artist/mrf.py
+    script:
+        # retrieve "latest" generic package from gitlab
+        - token_read_api=${CI_JOB_TOKEN-}
+        - project_id=2889
+        - package_name=artist
+        - package_version=latest
+        - file_name=${package_name}
+        - 'curl  --fail --header "JOB-TOKEN: ${token_read_api}" "https://drf-gitlab.cea.fr/api/v4/projects/${project_id}/packages/generic/${package_name}/${package_version}/${file_name}" --output ${file_name}'
+        # run artist help
+        - chmod +x ${file_name}
+        - ./${file_name} -h
+

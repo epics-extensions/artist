@@ -1,0 +1,159 @@
+connectors:
+  SL_MBT_DIA_BI_EVR_2_:
+    type: PCIe EVR 300DC
+    pinlabels:
+    - OF
+    - UNIV0
+    - UNIV1
+    - UNIV2
+    - UNIV3
+    - UNIV4
+    - UNIV5
+    - UNIV6
+    - UNIV7
+    - UNIV8
+    - UNIV9
+    - UNIV10
+    - UNIV11
+    - UNIV12
+    - UNIV13
+    - UNIV14
+    - UNIV15
+  UNIV0:
+    type: UNIV0
+    style: simple
+  UNIV1:
+    type: UNIV1
+    style: simple
+  UNIV2:
+    type: UNIV2
+    style: simple
+  UNIV3:
+    type: UNIV3
+    style: simple
+  EVR SBCT: &id001
+    type: MTCA EVR 300U
+    pinlabels:
+    - OF
+    - OUT0
+    - OUT1
+    - OUT2
+    - OUT3
+    - IN0
+    - IN1
+    - UNIV0
+    - UNIV1
+    - UNIV2
+    - UNIV3
+  TUB for simulation:
+    type: TUB for simulation
+    style: simple
+  Reverse Chopper for simulation MPSTS:
+    type: Reverse Chopper for simulation MPSTS
+    style: simple
+  Physical Beam Gate:
+    type: Physical Beam Gate
+    style: simple
+  EVR BDM: *id001
+  SET EIS BB IN:
+    type: SET EIS BB IN
+    style: simple
+  Heartbeat:
+    type: Heartbeat
+    style: simple
+  ShutBeam:
+    type: ShutBeam
+    style: simple
+  StopBeam:
+    type: StopBeam
+    style: simple
+  EIS BB IN:
+    type: EIS BB IN
+    style: simple
+  StartBeam:
+    type: StartBeam
+    style: simple
+  EVMMaster:
+    type: OM4
+    pinlabels:
+    - RXTX1
+    - RXTX2
+    - RXTX3
+    - RXTX4
+    - RXTX5
+    - RXTX6
+    - RXTX7
+    - RXTX8
+cables:
+  TTL:
+    type: LEMO
+    colors:
+    - BK
+  OF1: &id002
+    type: LC/LC
+    colors:
+    - PK
+    - PK
+  OF2: *id002
+  OF3: *id002
+connections:
+- - SL_MBT_DIA_BI_EVR_2_: 1
+  - OF1: 1
+  - EVMMaster: 6
+- - SL_MBT_DIA_BI_EVR_2_: 1
+  - OF1: 2
+  - EVMMaster: 6
+- - UNIV0.: 1
+  - TTL.: 1
+  - SL_MBT_DIA_BI_EVR_2_: UNIV0
+- - UNIV1.: 1
+  - TTL.: 1
+  - SL_MBT_DIA_BI_EVR_2_: UNIV1
+- - UNIV2.: 1
+  - TTL.: 1
+  - SL_MBT_DIA_BI_EVR_2_: UNIV2
+- - UNIV3.: 1
+  - TTL.: 1
+  - SL_MBT_DIA_BI_EVR_2_: UNIV3
+- - EVR SBCT: 1
+  - OF2: 1
+  - EVMMaster: 5
+- - EVR SBCT: 1
+  - OF2: 2
+  - EVMMaster: 5
+- - TUB for simulation.: 1
+  - TTL.: 1
+  - EVR SBCT: OUT0
+- - Reverse Chopper for simulation MPSTS.: 1
+  - TTL.: 1
+  - EVR SBCT: OUT2
+- - Physical Beam Gate.: 1
+  - TTL.: 1
+  - EVR SBCT: OUT3
+- - EVR BDM: 1
+  - OF3: 1
+  - EVMMaster: 2
+- - EVR BDM: 1
+  - OF3: 2
+  - EVMMaster: 2
+- - SET EIS BB IN.: 1
+  - TTL.: 1
+  - EVR BDM: OUT0
+- - Heartbeat.: 1
+  - TTL.: 1
+  - EVR BDM: OUT1
+- - ShutBeam.: 1
+  - TTL.: 1
+  - EVR BDM: IN0
+- - StopBeam.: 1
+  - TTL.: 1
+  - EVR BDM: IN1
+- - EIS BB IN.: 1
+  - TTL.: 1
+  - EVR BDM: UNIV0
+- - StartBeam.: 1
+  - TTL.: 1
+  - EVR BDM: UNIV1
+- - ShutBeam.: 1
+  - TTL.: 1
+  - EVR BDM: UNIV2
