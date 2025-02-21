@@ -6,23 +6,21 @@ from pathlib import Path
 
 import epics
 
-import artist.mrf
-import artist.wireviz
-import artist.mermaid
+from artist import data, mermaid, mrf, wireviz
 
 epics.ca.HAS_NUMPY = False
 
-def separate_pvs(list_pvs: list) -> tuple:
+def separate_pvs(list_pvs: list,data_retriever:data.AbstractDataRetriever) -> tuple:
     """Dissociate evr from evm."""
     list_evr_pvs = []
     list_evm_pvs = []
     try:
         for pv_name in list_pvs:
-            evr=artist.mrf.create_evr(pv_name)
+            evr=mrf.create_evr(pv_name,data_retriever)
             if (evr is not None):
                 list_evr_pvs.append(evr)
             else:
-                evm=artist.mrf.create_evm(pv_name)
+                evm=mrf.create_evm(pv_name,data_retriever)
                 if (evm is not None):
                     list_evm_pvs.append(evm)
     except Exception:
@@ -40,7 +38,7 @@ def main() -> None:
         description="Script to serialize EPICS records to csv file",
     )
     parser.add_argument("inputFile", help="File containing the PVList")
-    parser.add_argument("outputFile", help="Result file")
+    parser.add_argument("outputPath", help="Result directory")
     parser.add_argument(
         "-v",
         "--verbosity",
@@ -73,17 +71,25 @@ def main() -> None:
     with Path.open(args.inputFile) as file:
         for line in file:
             list_pvs.extend([line.strip().replace(" ", "")])
-
-    list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs)
+    channel_data_retriever= data.ChannelAccessRetriever()
+    list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
     if (args.format=="md"):
-        code = artist.mermaid.generate_mermaid_code(list_evr_pvs, list_evm_pvs)
+        code = mermaid.generate_mermaid_code(
+            list_evr_pvs,
+            list_evm_pvs,
+            args.add_io,
+            args.outputPath,
+            )
         logging.info("Code Mermaid generated:")
     else:
-        code = artist.wireviz.generate_wireviz_code(list_evr_pvs, list_evm_pvs,args.add_io)
+        code = wireviz.generate_wireviz_code(
+            list_evr_pvs,
+            list_evm_pvs,
+            args.add_io,
+            args.outputPath,
+            )
+        logging.info("Code Mermaid generated:")
     print(code)
-    with Path.open(args.outputFile,"w") as file:
-        file.write(code)
-
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,0 @@
-Id	Description	Qty	Unit	Designators
-1	Cable, LC/LC, 2 wires	0	m	OF1, OF2, OF3
-2	Connector, MTCA EVR 300U, 1 pins	2		EVR BDM, EVR SBCT
-3	Connector, OM4, 8 pins	1		EVMMaster
-4	Connector, PCIe EVR 300DC, 1 pins	1		SL_MBT_DIA_BI_EVR_2_

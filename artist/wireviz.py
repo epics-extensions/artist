@@ -1,9 +1,61 @@
 import yaml
-
+import os
 import artist.mrf
+import subprocess
+from artist import wireviz
 
+evr_unknown = {
+            "type": "OM4",
+            "pinlabels": ["OF"],
+        }
 
-def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool) -> str:  # noqa: FBT001
+evr_u = {
+    "type": artist.mrf.type_MTCAEVR300U,
+    "pinlabels": ["OF",
+                    "OUT0",
+                    "OUT1",
+                    "OUT2",
+                    "OUT3",
+                    "IN0",
+                    "IN1",
+                    "UNIV0",
+                    "UNIV1",
+                    "UNIV2",
+                    "UNIV3",
+                    ],
+}
+pci = {
+    "type": artist.mrf.type_PCIEEVR300,
+    "pinlabels": ["OF",
+                    "UNIV0",
+                    "UNIV1",
+                    "UNIV2",
+                    "UNIV3",
+                    "UNIV4",
+                    "UNIV5",
+                    "UNIV6",
+                    "UNIV7",
+                    "UNIV8",
+                    "UNIV9",
+                    "UNIV10",
+                    "UNIV11",
+                    "UNIV12",
+                    "UNIV13",
+                    "UNIV14",
+                    "UNIV15",
+                    ],
+}
+# cables dictionnaire
+of = {
+    "type": "LC/LC",
+    "colors": ["PK", "PK"],
+}
+ttl = {
+    "type": "LEMO",
+    "colors": ["BK"],
+}
+
+def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool,outputPath:str) -> str:  # noqa: FBT001
     """Generate a WireViz YAML schema based on the provided EVR and EVM lists.
 
     Args:
@@ -19,70 +71,20 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool) -> st
                 ,cables, and connections.
 
     """
-    # cables dictionnaire
-    of = {
-        "type": "LC/LC",
-        "colors": ["PK", "PK"],
-    }
-    ttl = {
-        "type": "LEMO",
-        "colors": ["BK"],
-    }
     n_cables=0
     cables_dict={}
     cables_dict["TTL"]=ttl
     # Connectors dictionnaire
-    if (output):
-        evr_unknown = {
+    if (not output):
+        wireviz.evr_unknown = {
             "type": "OM4",
             "pinlabels": ["OF"],
         }
-        evr_u = {
-            "type": artist.mrf.type_MTCAEVR300U,
-            "pinlabels": ["OF",
-                          "OUT0",
-                          "OUT1",
-                          "OUT2",
-                          "OUT3",
-                          "IN0",
-                          "IN1",
-                          "UNIV0",
-                          "UNIV1",
-                          "UNIV2",
-                          "UNIV3",
-                          ],
-        }
-        pci = {
-            "type": artist.mrf.type_PCIEEVR300,
-            "pinlabels": ["OF",
-                          "UNIV0",
-                          "UNIV1",
-                          "UNIV2",
-                          "UNIV3",
-                          "UNIV4",
-                          "UNIV5",
-                          "UNIV6",
-                          "UNIV7",
-                          "UNIV8",
-                          "UNIV9",
-                          "UNIV10",
-                          "UNIV11",
-                          "UNIV12",
-                          "UNIV13",
-                          "UNIV14",
-                          "UNIV15",
-                          ],
-        }
-    else:
-        evr_unknown = {
-            "type": "OM4",
-            "pinlabels": ["OF"],
-        }
-        evr_u = {
+        wireviz.evr_u = {
             "type": artist.mrf.type_MTCAEVR300U,
             "pinlabels": ["OF"],
         }
-        pci = {
+        wireviz.pci = {
             "type": artist.mrf.type_PCIEEVR300,
             "pinlabels": ["OF"],
         }
@@ -105,15 +107,17 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool) -> st
             connector_dict[evr.desc]=evr_unknown
         name=f"OF{n_cables}"
         cables_dict[name]= of
-        sublist_connect_rx.append({evr.desc:1})
-        sublist_connect_tx.append({evr.desc:1})
-        sublist_connect_rx.append({name:1})
-        sublist_connect_tx.append({name:2})
+
         evm_parent=next((evm for evm in list_evms if evm.id == evr.parent_id), None)
-        sublist_connect_rx.append({evm_parent.name:evr.port})
-        sublist_connect_tx.append({evm_parent.name:evr.port})
-        connections.append(sublist_connect_rx)
-        connections.append(sublist_connect_tx)
+        if (evm_parent is not None):
+            sublist_connect_rx.append({evr.desc:1})
+            sublist_connect_tx.append({evr.desc:1})
+            sublist_connect_rx.append({name:1})
+            sublist_connect_tx.append({name:2})
+            sublist_connect_rx.append({evm_parent.name:evr.port})
+            sublist_connect_tx.append({evm_parent.name:evr.port})
+            connections.append(sublist_connect_rx)
+            connections.append(sublist_connect_tx)
         if (output):
             for fp in evr.listFP:
                 sublist_connect=[]
@@ -136,19 +140,24 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool) -> st
             connector_dict[("EVM",n)]= evmmaster
             cables_dict[("OF",n_cables)]= of
 
-    #Connections
-
-
-
     cable_schema = {
         "connectors": connector_dict,
         "cables": cables_dict,
         "connections": connections,
     }
-
-    return  yaml.dump(
+    yamlFile=  yaml.dump(
         cable_schema,
         default_flow_style=False,
         allow_unicode=True,
         sort_keys=False,
         )
+    create_file(outputPath, yamlFile)
+    return  yamlFile
+
+def create_file(outputPath, yamlFile):
+    os.makedirs(outputPath, exist_ok=True)
+    with open(f"{outputPath}/output.yml", 'w') as f:
+        f.write(yamlFile)
+    command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"
+
+    subprocess.run(command, shell=True, check=True)
