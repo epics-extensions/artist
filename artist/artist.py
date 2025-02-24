@@ -68,7 +68,7 @@ def main() -> None:
     logging.basicConfig(level=arg_debug)
     args = parser.parse_args()
     list_pvs = []
-    with Path.open(args.inputFile) as file:
+    with open(args.inputFile, 'r') as file:
         for line in file:
             list_pvs.extend([line.strip().replace(" ", "")])
     channel_data_retriever= data.ChannelAccessRetriever()
