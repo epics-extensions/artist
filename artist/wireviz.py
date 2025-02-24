@@ -105,7 +105,7 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool,output
             connector_dict[evr.desc]= pci
         else:
             connector_dict[evr.desc]=evr_unknown
-        name=f"OF{n_cables}"
+        name=f"OF{evr.parent_id}{evr.port}"
         cables_dict[name]= of
 
         evm_parent=next((evm for evm in list_evms if evm.id == evr.parent_id), None)
@@ -135,10 +135,27 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool,output
         if evm.master:
             connector_dict["EVMMaster"]= evmmaster
         else:
+            sublist_connect_rx=[]
+            sublist_connect_tx=[]
             n=n+1
             n_cables=n_cables+1
-            connector_dict[("EVM",n)]= evmmaster
-            cables_dict[("OF",n_cables)]= of
+            connector_dict[f"{evm.name}"]= evmmaster
+            cables_dict[(f"OF{evm.parent_id}{evm.port}")]= of
+            name=f"OF{evm.parent_id}{evm.port}"
+            cables_dict[name]= of
+            sublist_connect_rx.append({evm.name:8})
+            sublist_connect_tx.append({evm.name:8})
+            sublist_connect_rx.append({name:1})
+            sublist_connect_tx.append({name:2})
+            if (evm.parent_id==0):
+                sublist_connect_rx.append({"EVMMaster":evm.port})
+                sublist_connect_tx.append({"EVMMaster":evm.port})
+            else:
+                sublist_connect_rx.append({f"EVMFanout{evm.parent_id}{evm.port}":evm.port})
+                sublist_connect_tx.append({f"EVMMaster{evm.parent_id}{evm.port}":evm.port})
+
+            connections.append(sublist_connect_rx)
+            connections.append(sublist_connect_tx)
 
     cable_schema = {
         "connectors": connector_dict,
@@ -156,6 +173,7 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool,output
 
 def create_file(outputPath, yamlFile):
     os.makedirs(outputPath, exist_ok=True)
+    print(yamlFile)
     with open(f"{outputPath}/output.yml", 'w') as f:
         f.write(yamlFile)
     command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"

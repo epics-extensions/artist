@@ -73,9 +73,15 @@ def main() -> None:
             list_pvs.extend([line.strip().replace(" ", "")])
     channel_data_retriever= data.ChannelAccessRetriever()
     list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
+    sorted_evrs = sorted(list_evr_pvs, key=lambda evr: (evr.parent_id, evr.port))
+    for evr in list_evr_pvs:
+        print(f"non sorted {evr.parent_id}{evr.port}")
+    for evr in sorted_evrs:
+        print(f"sorted {evr.parent_id}{evr.port}")
+
     if (args.format=="md"):
         code = mermaid.generate_mermaid_code(
-            list_evr_pvs,
+            sorted_evrs,
             list_evm_pvs,
             args.add_io,
             args.outputPath,
@@ -83,7 +89,7 @@ def main() -> None:
         logging.info("Code Mermaid generated:")
     else:
         code = wireviz.generate_wireviz_code(
-            list_evr_pvs,
+            sorted_evrs,
             list_evm_pvs,
             args.add_io,
             args.outputPath,

@@ -217,7 +217,7 @@ def create_evm(pv_name:str, data_retriever: data.AbstractDataRetriever)->EVM:
         value = int(hex(value).replace("0x", ""))
         parent_id, port = divmod(value, 10)
         master=False
-        name="EVMFanout."
+        name=f"EVMFanout{parent_id}{port}"
         if (value==0):
             master=True
             name="EVMMaster"
