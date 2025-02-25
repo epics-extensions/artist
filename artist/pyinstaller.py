@@ -3,7 +3,6 @@ import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).parent.absolute()
-path_to_main = str(HERE / "artist.py")
 
 def install()->None:
     """Install Function to build binary with pyInstaller."""
@@ -12,7 +11,7 @@ def install()->None:
         "--onefile",
         "--clean",
         "--hidden-import epics.clibs",
-        path_to_main,
+        "artist/artist.py",
         # other pyinstaller options...
     ]
     subprocess.run(command, check=True)
