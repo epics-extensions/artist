@@ -182,5 +182,20 @@ def create_file(outputPath, yamlFile):
         f.write(yamlFile)
     #command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"
     #subprocess.run(command, shell=True, check=True)
+
+    if getattr(sys, 'frozen', False):  # Si PyInstaller a généré un exécutable
+        base_path = sys._MEIPASS  # Répertoire temporaire utilisé par PyInstaller
+        if os.name == "nt":  # Windows
+            graphviz_bin = os.path.join(base_path, "graphviz_embedded", "bin")
+        else:  # Linux/macOS
+            graphviz_bin = os.path.join(base_path, "graphviz_embedded")
+
+        # Ajouter Graphviz au PATH
+        os.environ["PATH"] += os.pathsep + graphviz_bin
+        os.environ["GRAPHVIZ_DOT"] = os.path.join(graphviz_bin, "dot")
+
+    # Vérifier si Graphviz est bien trouvé
+    print("Graphviz path:", os.environ.get("GRAPHVIZ_DOT"))
+
     sys.argv = ["wireviz", f"{outputPath}/output.yml"]
     wireviz()
