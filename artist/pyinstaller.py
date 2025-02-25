@@ -9,10 +9,10 @@ def install()->None:
     """Install Function to build binary with pyInstaller."""
     command = [
         "pyinstaller",
-        path_to_main,
         "--onefile",
         "--clean",
-        "--hidden-import=epics.clibs",
+        "--hidden-import epics.clibs",
+        path_to_main,
         # other pyinstaller options...
     ]
     subprocess.run(command, check=True)
