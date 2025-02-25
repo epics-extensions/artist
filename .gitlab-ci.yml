@@ -54,6 +54,7 @@ push-new-executable:
         - artist/mermaid.py
         - artist/wireviz.py
         - artist/mrf.py
+        - artist/pyinstaller.py
         - .gitlab-ci.yml
     script:
         # deploy "latest" generic package to gitlab
