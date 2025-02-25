@@ -13,6 +13,8 @@ def get_wireviz_path():
 
 def install():
     wireviz_path=get_wireviz_path()
+    os.chmod(wireviz_path, 0o777)
+    wireviz_path=f'{wireviz_path}:wireviz'
     print(wireviz_path)
     PyInstaller.__main__.run([
         path_to_main,
@@ -20,6 +22,7 @@ def install():
         '--windowed',
         '--hidden-import',
         'epics.clibs',
-        f'--add-binary={wireviz_path}:wireviz',
+        '--add-binary',
+        wireviz_path,
  
     ])
