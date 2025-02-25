@@ -2,7 +2,11 @@ import yaml
 import os
 import artist.mrf
 import subprocess
-from artist import wireviz
+from artist import wirevizData
+import sys
+from wireviz.wv_cli import wireviz
+
+
 
 evr_unknown = {
             "type": "OM4",
@@ -76,15 +80,15 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool,output
     cables_dict["TTL"]=ttl
     # Connectors dictionnaire
     if (not output):
-        wireviz.evr_unknown = {
+        wirevizData.evr_unknown = {
             "type": "OM4",
             "pinlabels": ["OF"],
         }
-        wireviz.evr_u = {
+        wirevizData.evr_u = {
             "type": artist.mrf.type_MTCAEVR300U,
             "pinlabels": ["OF"],
         }
-        wireviz.pci = {
+        wirevizData.pci = {
             "type": artist.mrf.type_PCIEEVR300,
             "pinlabels": ["OF"],
         }
@@ -176,6 +180,7 @@ def create_file(outputPath, yamlFile):
     print(yamlFile)
     with open(f"{outputPath}/output.yml", 'w') as f:
         f.write(yamlFile)
-    command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"
-
-    subprocess.run(command, shell=True, check=True)
+    #command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"
+    #subprocess.run(command, shell=True, check=True)
+    sys.argv = ["wireviz", f"{outputPath}/output.yml"]
+    wireviz()

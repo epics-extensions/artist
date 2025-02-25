@@ -6,7 +6,7 @@ from pathlib import Path
 
 import epics
 
-from artist import data, mermaid, mrf, wireviz
+from artist import data, mermaid, mrf, wirevizData
 
 epics.ca.HAS_NUMPY = False
 
@@ -88,7 +88,7 @@ def main() -> None:
             )
         logging.info("Code Mermaid generated:")
     else:
-        code = wireviz.generate_wireviz_code(
+        code = wirevizData.generate_wireviz_code(
             sorted_evrs,
             list_evm_pvs,
             args.add_io,
