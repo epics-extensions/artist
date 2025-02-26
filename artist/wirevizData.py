@@ -191,6 +191,5 @@ def create_file(outputPath, yamlFile):
         f.write(my_png)
     with open(f"{outputPath}/output.svg", "wb") as f:
         f.write(my_svg)
-    print(outputPath)
 
 

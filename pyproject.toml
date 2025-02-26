@@ -24,6 +24,8 @@ ignore = [
   "D203",
   # multi-line-summary-second-line
   "D213",
+  #for python 2.6 compatibility
+  "PTH123"
 ]
 
 [build-system]
