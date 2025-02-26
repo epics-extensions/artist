@@ -52,7 +52,7 @@ push-new-executable:
     - changes:
         - artist/artist.py
         - artist/mermaid.py
-        - artist/wireviz.py
+        - artist/wirevizData.py
         - artist/mrf.py
         - artist/pyinstaller.py
         - .gitlab-ci.yml
