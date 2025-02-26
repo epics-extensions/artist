@@ -3,7 +3,7 @@ import os
 import artist.mrf
 from artist import wirevizData
 from wireviz import wireviz
-
+import graphviz
 
 
 evr_unknown = {
@@ -178,18 +178,19 @@ def create_file(outputPath, yamlFile):
     print(yamlFile)
     with open(f"{outputPath}/output.yml", 'w') as f:
         f.write(yamlFile)
-    #command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"
-    #subprocess.run(command, shell=True, check=True)
-
-    my_harness, my_png, my_svg = wireviz.parse(
-        yamlFile,
-        return_types=("harness", "png", "svg"),
-        output_dir="toto",
-        )
-    my_svg = my_svg.encode()
-    with open(f"{outputPath}/output.png", "wb") as f:
-        f.write(my_png)
-    with open(f"{outputPath}/output.svg", "wb") as f:
-        f.write(my_svg)
+    try:
+        my_harness, my_png, my_svg = wireviz.parse(
+            yamlFile,
+            return_types=("harness", "png", "svg"),
+            output_dir="toto",
+            )
+        my_svg = my_svg.encode()
+        with open(f"{outputPath}/output.png", "wb") as f:
+            f.write(my_png)
+        with open(f"{outputPath}/output.svg", "wb") as f:
+            f.write(my_svg)
+    except graphviz.backend.execute.ExecutableNotFound as e:
+          print(f"Error Exception : {e}")
+          print("You probably need to install graphviz on your computer.")
 
 

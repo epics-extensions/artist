@@ -13,4 +13,6 @@ def install():
         '--windowed',
         '--hidden-import',
         'epics.clibs',
+        '--add-binary',
+        'graphviz',
     ])

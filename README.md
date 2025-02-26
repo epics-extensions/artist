@@ -36,7 +36,7 @@ poetry shell
 ```
 Then you can call the script from anywhere
 ``` bash
-spicer --PVs="Labo*" --host=myElasticSearchHost
+artist fileListingPrefixes /tmp/outputPath -f wireviz --add-io
 ```
 ### Using Binary
 If you have build the binary you can 
@@ -47,23 +47,33 @@ If you have build the binary you can
 
 ## Usage
  ```
- usage: artist [-h] [-v {0,1,2,3,4,5}] inputFile
+usage: artist [-h] [-v {0,1,2,3,4,5}] [-f {md,wireviz}] [--add-io] inputFile outputPath
+
+Script to serialize EPICS records to csv file
 
 positional arguments:
   inputFile             File containing the PVList
+  outputPath            Result directory
 
 options:
   -h, --help            show this help message and exit
   -v {0,1,2,3,4,5}, --verbosity {0,1,2,3,4,5}
                         decrease output verbosity. 5 (Critical), 4 (Error), 3 (Warning, default), 2 (Info), 1 (Debug)
+  -f {md,wireviz}, --format {md,wireviz}
+                        Define which format for the output.
+  --add-io              Add input/output of the EVR on the synoptics
  ```
+
+### Format 
 For the following list of Prefix in the file listPrefixDevices
 ```
 SL-TMG-TIM:TIM-EVM-1:
 SL-MPS-BDM:TIM-EVR-1:
 SL-MPS-SBCT:TIM-EVR-1:
 ```
-Execution of the script will give you that
+
+#### Mermaid 
+Execution of the script with the format mermaid will give you that
 ```
 > artist listPrefixDevices
 graph TD;
@@ -74,3 +84,9 @@ EVR SBCT]
 ```
 
 you can use https://mermaid.live to draw the mermaid result as a graph.
+
+#### Wireviz 
+
+Now you can also generate wireviz format synoptic https://github.com/wireviz/WireViz
+
+⚠️ : Graphviz need to be installed in your computer, if you use the binary. No problem with poetry.
