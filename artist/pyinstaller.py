@@ -13,5 +13,4 @@ def install():
         '--windowed',
         '--hidden-import',
         'epics.clibs',
-        '--add-data', 'graphviz_embedded:graphviz'
     ])

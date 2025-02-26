@@ -1,10 +1,8 @@
 import yaml
 import os
 import artist.mrf
-import subprocess
 from artist import wirevizData
-import sys
-from wireviz.wv_cli import wireviz
+from wireviz import wireviz
 
 
 
@@ -183,19 +181,16 @@ def create_file(outputPath, yamlFile):
     #command = f"wireviz {outputPath}/output.yml --output-dir {outputPath}"
     #subprocess.run(command, shell=True, check=True)
 
-    if getattr(sys, 'frozen', False):  # Si PyInstaller a généré un exécutable
-        base_path = sys._MEIPASS  # Répertoire temporaire utilisé par PyInstaller
-        if os.name == "nt":  # Windows
-            graphviz_bin = os.path.join(base_path, "graphviz_embedded", "bin")
-        else:  # Linux/macOS
-            graphviz_bin = os.path.join(base_path, "graphviz_embedded")
+    my_harness, my_png, my_svg = wireviz.parse(
+        yamlFile,
+        return_types=("harness", "png", "svg"),
+        output_dir="toto",
+        )
+    my_svg = my_svg.encode()
+    with open(f"{outputPath}/output.png", "wb") as f:
+        f.write(my_png)
+    with open(f"{outputPath}/output.svg", "wb") as f:
+        f.write(my_svg)
+    print(outputPath)
 
-        # Ajouter Graphviz au PATH
-        os.environ["PATH"] += os.pathsep + graphviz_bin
-        os.environ["GRAPHVIZ_DOT"] = os.path.join(graphviz_bin, "dot")
 
-    # Vérifier si Graphviz est bien trouvé
-    print("Graphviz path:", os.environ.get("GRAPHVIZ_DOT"))
-
-    sys.argv = ["wireviz", f"{outputPath}/output.yml"]
-    wireviz()
