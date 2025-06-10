@@ -22,12 +22,13 @@ def generate_mermaid_code(
     """
     mermaid_code = "graph TD;\n"
 
+    evm_master = next((element for element in list_evms if element.id == 0), None)
     for evr in list_evrs:
         if evr.parent_id == 0:
-            mermaid_code += f"  {evr.parent_id}[EVM Master] <-->|Port {evr.port}| {evr.parent_id}{evr.port}[{evr.type}\n{evr.desc}]\n"  # noqa: E501
+            mermaid_code += f"  {evr.parent_id}[EVM Master\nv{evm_master.firmware}] <-->|Port {evr.port}| {evr.parent_id}{evr.port}[{evr.type}\nv{evr.firmware}\n{evr.desc}]\n"  # noqa: E501
         else:
             mermaid_code += (
-                f"  {evr.parent_id} <-->|Port {evr.port}| {evr.parent_id}{evr.port}[{evr.desc}]\n"
+                f"  {evr.parent_id} <-->|Port {evr.port}| {evr.parent_id}{evr.port}[{evr.type}\nv{evr.firmware}\n{evr.desc}]\n"
             )
         i=0
         if output:
@@ -38,14 +39,13 @@ def generate_mermaid_code(
                     f"{evr.parent_id}{evr.port}{i}[{fp[0]}]\n"
                 )
 
-
     for evm in list_evms:
         if (not evm.master):
             if evm.parent_id == 0:
-                mermaid_code += f"  {evm.parent_id}[EVM Master] <-->|Port {evm.port}| {evm.port}[EVM Fanout]\n"  # noqa: E501
+                mermaid_code += f"  {evm.parent_id}[EVM Master {evm.firmware}] <-->|Port {evm.port}| {evm.port}[EVM Fanout {evm.firmware}]\n"  # noqa: E501
             else:
                 mermaid_code += (
-                    f"  {evm.parent_id} <-->|Port {evm.port}| {evm.port}[EVM Fanout]\n"
+                    f"  {evm.parent_id} <-->|Port {evm.port}| {evm.port}[EVM Fanout {evm.firmware}]\n"
                 )
     from pathlib import Path
     Path(output_path).mkdir(parents=True, exist_ok=True)

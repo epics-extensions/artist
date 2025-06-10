@@ -14,6 +14,7 @@ class EVR:
             parent_id:int,
             port:int,
             desc: str,
+            firmware: str
             ) -> None:
         """Initialize EVR Class with the id and the type of the EVR."""
         self.parent_id = parent_id
@@ -22,6 +23,7 @@ class EVR:
         self.prefix = prefix
         self.type ="not defined"
         self.data_retriever=data_retriever
+        self.firmware=firmware
 
     def def_frontpanel(self: "EVR")->None:
         """Build frontpanel connection of the EVR."""
@@ -52,9 +54,10 @@ class MTCAEVR300U(EVR):
             parent_id:int,
             port:int,
             desc: str,
+            firmware: str,
             ) -> None:
         """Init Function of the object."""
-        EVR.__init__(self,data_retriever,prefix,parent_id,port,desc)
+        EVR.__init__(self,data_retriever,prefix,parent_id,port,desc,firmware)
         self.type=type_MTCAEVR300U
 
 
@@ -125,9 +128,10 @@ class PCIEVR300(EVR):
             parent_id:int,
             port:int,
             desc: str,
+            firmware: str
             ) -> None:
       """Init Function of the object."""
-      EVR.__init__(self,data_retriever,prefix,parent_id,port,desc)
+      EVR.__init__(self,data_retriever,prefix,parent_id,port,desc,firmware)
       self.type=type_PCIEEVR300
 
     def def_frontpanel(self: "EVR")->None:
@@ -150,6 +154,7 @@ class EVM:
         parent_id: int,
         port: int,
         name: str,
+        firmware: str,
         master: bool,  # noqa: FBT001
     ) -> None:
         """Initialize EVR Class with the id and the type of the EVR."""
@@ -159,6 +164,7 @@ class EVM:
         self.port = port
         self.master = master
         self.name=name
+        self.firmware=firmware
 
 
 def create_evr(pv_name: str,data_retriever: data.AbstractDataRetriever,) -> EVR:
@@ -173,6 +179,9 @@ def create_evr(pv_name: str,data_retriever: data.AbstractDataRetriever,) -> EVR:
     """
     pv_id = pv_name + "DC-ID-I"
     value = data_retriever.get(pv_id)
+    pv_fw = pv_name + "FwVer-I"
+    value_fw = data_retriever.get(pv_fw)
+    print("firmware"+value_fw)
     evr= None
     if value is not None:
         #hardware Type
@@ -191,9 +200,9 @@ def create_evr(pv_name: str,data_retriever: data.AbstractDataRetriever,) -> EVR:
         parent_id, port = divmod(value, 10)
 
         if (hw_type== "mTCA-EVR-300"):
-            evr = MTCAEVR300U(data_retriever,pv_name,parent_id,port, desc)
+            evr = MTCAEVR300U(data_retriever,pv_name,parent_id,port, desc,value_fw)
         elif (hw_type== "PCIe-EVR-300DC"):
-             evr = PCIEVR300(data_retriever,pv_name,parent_id,port, desc)
+             evr = PCIEVR300(data_retriever,pv_name,parent_id,port, desc,value_fw)
         else:
             evr = EVR(pv_name,parent_id,port, desc)
         evr.def_frontpanel()
@@ -212,6 +221,8 @@ def create_evm(pv_name:str, data_retriever: data.AbstractDataRetriever)->EVM:
     """
     pv_id = pv_name + "FCT-ID-I"
     value = data_retriever.get(pv_id)
+    pv_fw = pv_name + "FwVer-I"
+    value_fw = data_retriever.get(pv_fw)
     evm=None
     if value is not None:
         value = int(hex(value).replace("0x", ""))
@@ -221,6 +232,6 @@ def create_evm(pv_name:str, data_retriever: data.AbstractDataRetriever)->EVM:
         if (value==0):
             master=True
             name="EVMMaster"
-        evm = EVM(data_retriever,value,parent_id,port,name,master)
+        evm = EVM(data_retriever,value,parent_id,port,name,value_fw,master)
     return evm
 
