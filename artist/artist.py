@@ -6,7 +6,7 @@ from pathlib import Path
 
 import epics
 
-from artist import data, mermaid, mrf, wirevizData
+from artist import data, graphviz, mermaid, mrf, wirevizData
 
 epics.ca.HAS_NUMPY = False
 
@@ -31,11 +31,11 @@ def separate_pvs(list_pvs: list,data_retriever:data.AbstractDataRetriever) -> tu
 def main() -> None:
     """Program's main entry point."""
     parser = argparse.ArgumentParser(
-        prog="Depict",
+        prog="Artist",
         description="Document EPICs daTabase",
     )
     parser = argparse.ArgumentParser(
-        description="Script to serialize EPICS records to csv file",
+        description="Script to draw timing topology to defined format",
     )
     parser.add_argument("inputFile", help="File containing the PVList")
     parser.add_argument("outputPath", help="Result directory")
@@ -52,7 +52,7 @@ def main() -> None:
         "-f",
         "--format",
         type=str,
-        choices=["md","wireviz"],
+        choices=["md","wireviz","graphviz"],
         default="md",
         help="Define which format for the output.",
     )
@@ -63,7 +63,7 @@ def main() -> None:
     )
 
     args = parser.parse_args()
-    arg_debug = logging.WARNING if args.verbosity is None else args.verbosity * 10
+    arg_debug = logging.INFO if args.verbosity is None else args.verbosity * 10
 
     logging.basicConfig(level=arg_debug)
     args = parser.parse_args()
@@ -76,6 +76,7 @@ def main() -> None:
     sorted_evrs = sorted(list_evr_pvs, key=lambda evr: (evr.parent_id, evr.port))
 
     if (args.format=="md"):
+        print("md format generation")
         code = mermaid.generate_mermaid_code(
             sorted_evrs,
             list_evm_pvs,
@@ -83,7 +84,17 @@ def main() -> None:
             args.outputPath,
             )
         logging.info("Code Mermaid generated:")
+    elif (args.format=="graphviz"):
+        print("md format generation")
+        code = graphviz.generate_graphviz_plot(
+            sorted_evrs,
+            list_evm_pvs,
+            args.add_io,
+            args.outputPath,
+            )
+        logging.info("networkx generated:")
     else:
+        print("wireviz format generation")
         code = wirevizData.generate_wireviz_code(
             sorted_evrs,
             list_evm_pvs,
