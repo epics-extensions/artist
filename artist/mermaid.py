@@ -24,7 +24,9 @@ def generate_mermaid_code(
 
     evm_master = next((element for element in list_evms if element.id == 0), None)
     for evr in list_evrs:
-        if evr.parent_id == 0:
+        if evr.port == 0:
+            mermaid_code += f"  {evr.parent_id}{evr.port}[{evr.type}\nv{evr.firmware}\n{evr.desc}]\n"
+        elif evr.parent_id == 0:
             mermaid_code += f"  {evr.parent_id}[EVM Master\nv{evm_master.firmware}] <-->|Port {evr.port}| {evr.parent_id}{evr.port}[{evr.type}\nv{evr.firmware}\n{evr.desc}]\n"  # noqa: E501
         else:
             mermaid_code += (

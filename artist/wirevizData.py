@@ -149,12 +149,13 @@ def generate_wireviz_code(list_evrs: tuple, list_evms: tuple, output:bool,output
             sublist_connect_tx.append({evm.name:8})
             sublist_connect_rx.append({name:1})
             sublist_connect_tx.append({name:2})
-            if (evm.parent_id==0):
-                sublist_connect_rx.append({"EVMMaster":evm.port})
-                sublist_connect_tx.append({"EVMMaster":evm.port})
-            else:
-                sublist_connect_rx.append({f"EVMFanout{evm.parent_id}{evm.port}":evm.port})
-                sublist_connect_tx.append({f"EVMMaster{evm.parent_id}{evm.port}":evm.port})
+            if (evm.port!=0):
+                if (evm.parent_id==0):
+                        sublist_connect_rx.append({"EVMMaster":evm.port})
+                        sublist_connect_tx.append({"EVMMaster":evm.port})
+                else:
+                    sublist_connect_rx.append({f"EVMFanout{evm.parent_id}{evm.port}":evm.port})
+                    sublist_connect_tx.append({f"EVMMaster{evm.parent_id}{evm.port}":evm.port})
 
             connections.append(sublist_connect_rx)
             connections.append(sublist_connect_tx)

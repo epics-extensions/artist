@@ -14,7 +14,7 @@ class EVR:
             parent_id:int,
             port:int,
             desc: str,
-            firmware: str
+            firmware: str,
             ) -> None:
         """Initialize EVR Class with the id and the type of the EVR."""
         self.parent_id = parent_id
@@ -181,7 +181,6 @@ def create_evr(pv_name: str,data_retriever: data.AbstractDataRetriever,) -> EVR:
     value = data_retriever.get(pv_id)
     pv_fw = pv_name + "FwVer-I"
     value_fw = data_retriever.get(pv_fw)
-    print("firmware"+value_fw)
     evr= None
     if value is not None:
         #hardware Type
