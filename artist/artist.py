@@ -90,7 +90,6 @@ def main() -> None:
             sorted_evrs,
             list_evm_pvs,
             args.add_io,
-            args.outputPath,
             )
         logging.info("networkx generated:")
     else:
