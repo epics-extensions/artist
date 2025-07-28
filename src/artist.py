@@ -1,12 +1,12 @@
-"""CharTiming, script to build MRF topology to Mermaid format."""
+"""CharTiming, script to build MRF topology to visual format."""
 
 import argparse
 import logging
 from pathlib import Path
 
 import epics
-
-from artist import data, graphviz, mermaid, mrf, wirevizData
+import yaml
+import data, graphvizData, mermaid, mrf, wirevizData
 
 epics.ca.HAS_NUMPY = False
 
@@ -71,8 +71,35 @@ def main() -> None:
     with open(args.inputFile, 'r') as file:
         for line in file:
             list_pvs.extend([line.strip().replace(" ", "")])
+    with open(args.inputFile, "r", encoding="utf-8") as f:
+        conf = yaml.safe_load(f)
+
+    if isinstance(conf, dict):
+        list_evm_names = conf.get("evms", [])
+    elif isinstance(conf, list):
+        list_evm_names = conf
+
+    if isinstance(conf, dict):
+        list_evr_names = conf.get("evrs", [])
+    elif isinstance(conf, list):
+        list_evr_names = conf
+
     channel_data_retriever= data.ChannelAccessRetriever()
-    list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
+    list_evr_pvs=[]
+    list_evm_pvs=[]
+    for evm_name in list_evm_names:
+            print(conf)
+            print(list_evm_names)
+            print(evm_name)
+            evm=mrf.create_evm(evm_name,channel_data_retriever)
+            list_evm_pvs.append(evm)
+    for evr_name in list_evr_names:
+            print(evr_name)
+            evr=mrf.create_evr(evr_name,channel_data_retriever)
+            list_evr_pvs.append(evr)
+
+    evr=mrf.create_evr(pv_name,data_retriever)
+   # list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
     sorted_evrs = sorted(list_evr_pvs, key=lambda evr: (evr.parent_id, evr.port))
 
     if (args.format=="md"):
@@ -86,11 +113,10 @@ def main() -> None:
         logging.info("Code Mermaid generated:")
     elif (args.format=="graphviz"):
         print("md format generation")
-        code = graphviz.generate_graphviz_plot(
+        code = graphvizData.generate_graphviz_plot(
             sorted_evrs,
             list_evm_pvs,
             args.add_io,
-            args.outputPath,
             )
         logging.info("networkx generated:")
     else:

@@ -1,7 +1,7 @@
 import yaml
 import os
-import artist.mrf
-from artist import wirevizData
+import mrf
+import wirevizData
 from wireviz import wireviz
 import graphviz
 
@@ -12,7 +12,7 @@ evr_unknown = {
         }
 
 evr_u = {
-    "type": artist.mrf.type_MTCAEVR300U,
+    "type": mrf.type_MTCAEVR300U,
     "pinlabels": ["OF",
                     "OUT0",
                     "OUT1",
@@ -27,7 +27,7 @@ evr_u = {
                     ],
 }
 pci = {
-    "type": artist.mrf.type_PCIEEVR300,
+    "type": mrf.type_PCIEEVR300,
     "pinlabels": ["OF",
                     "UNIV0",
                     "UNIV1",
@@ -190,7 +190,7 @@ def create_file(outputPath, yamlFile):
             f.write(my_png)
         with open(f"{outputPath}/output.svg", "wb") as f:
             f.write(my_svg)
-    except graphviz.backend.execute.ExecutableNotFound as e:
+    except graphvizData.backend.execute.ExecutableNotFound as e:
           print(f"Error Exception : {e}")
           print("You probably need to install graphviz on your computer.")
 
