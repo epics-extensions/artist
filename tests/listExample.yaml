@@ -1,17 +1,17 @@
 - evms:
-    - SL-TMG-TIM:TIM-EVM-1::
+    - MyPV-EVMMaster::
         - titre: EVMMASTER
         - description: Master EVM 
-    - LABO-TMG-TIM:TIM-EVM-1::
+    - MyPV-EVMFanout1::
         - titre: EVMFANOUT1
-        - description: Master Fanout 1
+        - description: EVM Fanout 1
 - evrs:
-    - SL-MBT-DIA:BI-EVR-2::
-        - titre: EVRHARPS
-        - description: EVR Harps
-    - SL-MPS-SBCT:TIM-EVR-1::
-        - titre: EVRSBCT
-        - description: EVR SBCT
-    - SL-MPS-BDM:TIM-EVR-1::
-        - titre: EVRBDM
-        - description: EVR BDM
+    - MyPV-EVR1::
+        - titre: EVR1
+        - description: EVR 1
+    - MyPV-EVR2::
+        - titre: EVR2
+        - description: EVR 2
+    - MyPV-EVR3::
+        - titre: EVR3
+        - description: EVR 3

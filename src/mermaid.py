@@ -21,8 +21,8 @@ def generate_mermaid_code(
 
     """
     mermaid_code = "graph TD;\n"
-
-    evm_master = next((element for element in list_evms if element.id == 0), None)
+    if list_evms is not None and len(list_evms) > 0:
+        evm_master = next((element for element in list_evms if element.id == 0), None)
     for evr in list_evrs:
         if evr.port == 0:
             mermaid_code += f"  {evr.parent_id}{evr.port}[{evr.type}\nv{evr.firmware}\n{evr.desc}]\n"

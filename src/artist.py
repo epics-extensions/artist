@@ -6,7 +6,7 @@ from pathlib import Path
 
 import epics
 import yaml
-import data, graphvizData, mermaid, mrf, wirevizData
+from src import data, graphvizData, mermaid, mrf, wirevizData
 
 epics.ca.HAS_NUMPY = False
 
@@ -74,33 +74,45 @@ def main() -> None:
     with open(args.inputFile, "r", encoding="utf-8") as f:
         conf = yaml.safe_load(f)
 
-    if isinstance(conf, dict):
-        list_evm_names = conf.get("evms", [])
-    elif isinstance(conf, list):
-        list_evm_names = conf
-
-    if isinstance(conf, dict):
-        list_evr_names = conf.get("evrs", [])
-    elif isinstance(conf, list):
-        list_evr_names = conf
-
     channel_data_retriever= data.ChannelAccessRetriever()
     list_evr_pvs=[]
     list_evm_pvs=[]
-    for evm_name in list_evm_names:
-            print(conf)
-            print(list_evm_names)
-            print(evm_name)
-            evm=mrf.create_evm(evm_name,channel_data_retriever)
-            list_evm_pvs.append(evm)
-    for evr_name in list_evr_names:
-            print(evr_name)
-            evr=mrf.create_evr(evr_name,channel_data_retriever)
-            list_evr_pvs.append(evr)
+    sorted_evrs=[]
 
-    evr=mrf.create_evr(pv_name,data_retriever)
-   # list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
-    sorted_evrs = sorted(list_evr_pvs, key=lambda evr: (evr.parent_id, evr.port))
+
+
+    for bloc in conf:
+        if "evms" in bloc:
+            for evm in bloc["evms"]:
+                for name, infos in evm.items():
+                    titre = next((x["titre"] for x in infos if "titre" in x), None)
+                    description = next((x["description"] for x in infos if "description" in x), None)
+
+                    print("name:", name)
+                    print("titre:", titre)
+                    print("description:", description)
+                    print()
+                    evm=mrf.create_evm(name,channel_data_retriever)
+                    if evm is not None:
+                        list_evm_pvs.append(evm) 
+
+        if "evrs" in bloc:
+            for evr in bloc["evrs"]:
+                for name, infos in evr.items():
+                    titre = next((x["titre"] for x in infos if "titre" in x), None)
+                    description = next((x["description"] for x in infos if "description" in x), None)
+
+                    print("name:", name.rstrip(":"))
+                    print("titre:", titre)
+                    print("description:", description)
+                    print()
+                    evr=mrf.create_evr(name,channel_data_retriever)
+                    if evr is not None:
+                        list_evr_pvs.append(evr)
+    
+            # list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
+            if evr is not None:
+                sorted_evrs = sorted(list_evr_pvs, key=lambda evr: (evr.parent_id, evr.port))
 
     if (args.format=="md"):
         print("md format generation")
