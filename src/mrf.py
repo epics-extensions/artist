@@ -1,5 +1,5 @@
 """File to handle MRF timing system information."""
-import data
+from src import data
 type_MTCAEVR300U="MTCA EVR 300U"  # noqa: N816
 
 type_PCIEEVR300="PCIe EVR 300DC"  # noqa: N816

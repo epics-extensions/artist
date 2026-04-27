@@ -1,7 +1,7 @@
 import yaml
 import os
-import mrf
-import wirevizData
+from src import mrf
+from src import wirevizData
 from wireviz import wireviz
 import graphviz
 
