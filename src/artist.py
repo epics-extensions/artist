@@ -84,31 +84,37 @@ def main() -> None:
     for bloc in conf:
         if "evms" in bloc:
             for evm in bloc["evms"]:
-                for name, infos in evm.items():
-                    titre = next((x["titre"] for x in infos if "titre" in x), None)
-                    description = next((x["description"] for x in infos if "description" in x), None)
+                if (isinstance(evm,str)==False):
+                    for pv_name, infos in evm.items():
+                        name = next((x["name"] for x in infos if "name" in x), None)
+                        description = next((x["description"] for x in infos if "description" in x), None)
 
-                    print("name:", name)
-                    print("titre:", titre)
-                    print("description:", description)
-                    print()
-                    evm=mrf.create_evm(name,channel_data_retriever)
+                        print("pv_name:", pv_name)
+                        print("name:", name)
+                        print("description:", description)
+                        print()
+                        evm=mrf.create_evm(pv_name,name,description,channel_data_retriever)
+                        if evm is not None:
+                            list_evm_pvs.append(evm) 
+                else:
+                    evm=mrf.create_evm(evm,"","",channel_data_retriever)
                     if evm is not None:
                         list_evm_pvs.append(evm) 
 
         if "evrs" in bloc:
             for evr in bloc["evrs"]:
-                for name, infos in evr.items():
-                    titre = next((x["titre"] for x in infos if "titre" in x), None)
-                    description = next((x["description"] for x in infos if "description" in x), None)
+                if (evr is not str):
+                    for pv_name, infos in evr.items():
+                        name = next((x["name"] for x in infos if "name" in x), None)
+                        description = next((x["description"] for x in infos if "description" in x), None)
 
-                    print("name:", name.rstrip(":"))
-                    print("titre:", titre)
-                    print("description:", description)
-                    print()
-                    evr=mrf.create_evr(name,channel_data_retriever)
-                    if evr is not None:
-                        list_evr_pvs.append(evr)
+                        print("pv_name:", pv_name.rstrip(":"))
+                        print("name:", name)
+                        print("description:", description)
+                        print()
+                        evr=mrf.create_evr(pv_name,channel_data_retriever)
+                        if evr is not None:
+                            list_evr_pvs.append(evr)
     
             # list_evr_pvs, list_evm_pvs = separate_pvs(list_pvs,channel_data_retriever)
             if evr is not None:
