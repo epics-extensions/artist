@@ -64,9 +64,17 @@ def generate_graphviz_plot(  # noqa: C901
     with dot.subgraph(name="EVMs") as c:
         c.attr(label="EVMs")
         for evm in list_evms:
+            if (evm.description is None or evm.description =="") and (evm.name is None or evm.name==""):
+                label_evm=evm.pv_name
+            else:
+                label_evm=""
+                if (evm.name is not None):
+                    label_evm=evm.name                
+                if (evm.description is not None):
+                    label_evm=label_evm + " "+ evm.description
             dot.node(
                     f"EVM{evm.id}",
-                    label=f"EVM{evm.id}|{output_evm}",
+                    label=f"EVM{evm.id} {label_evm}|{output_evm}",
                     shape="record",
                     style="filled",
                     fillcolor="violet",

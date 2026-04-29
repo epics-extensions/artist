@@ -143,7 +143,6 @@ class PCIEVR300(EVR):
                 list_fp.append(tup)
         self.listFP=list_fp
 
-
 class EVM:
     """to represent an EVM in python object."""
 
@@ -154,6 +153,8 @@ class EVM:
         parent_id: int,
         port: int,
         name: str,
+        description: str,
+        pv_name: str,
         firmware: str,
         master: bool,  # noqa: FBT001
     ) -> None:
@@ -164,8 +165,9 @@ class EVM:
         self.port = port
         self.master = master
         self.name=name
+        self.pv_name=pv_name
+        self.description=description
         self.firmware=firmware
-
 
 def create_evr(pv_name: str,data_retriever: data.AbstractDataRetriever,) -> EVR:
     """Create an EVR object based on the provided process variable name.
@@ -208,7 +210,7 @@ def create_evr(pv_name: str,data_retriever: data.AbstractDataRetriever,) -> EVR:
 
     return evr
 
-def create_evm(pv_name:str, data_retriever: data.AbstractDataRetriever)->EVM:
+def create_evm(pv_name:str,evm_name:str,description:str, data_retriever: data.AbstractDataRetriever)->EVM:
     """Create an EVM object based on the provided process variable name.
 
     Args:
@@ -227,10 +229,8 @@ def create_evm(pv_name:str, data_retriever: data.AbstractDataRetriever)->EVM:
         value = int(hex(value).replace("0x", ""))
         parent_id, port = divmod(value, 10)
         master=False
-        name=f"EVMFanout{parent_id}{port}"
         if (value==0):
             master=True
-            name="EVMMaster"
-        evm = EVM(data_retriever,value,parent_id,port,name,value_fw,master)
+        evm = EVM(data_retriever,value,parent_id,port,evm_name,description,pv_name,value_fw,master)
     return evm
 

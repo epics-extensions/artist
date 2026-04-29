@@ -1,17 +1,17 @@
 - evms:
     - MyPV-EVMMaster::
-        - titre: EVMMASTER
+        - name: "EVMMASTER"
         - description: Master EVM 
     - MyPV-EVMFanout1::
-        - titre: EVMFANOUT1
+        - name: EVMFANOUT1
         - description: EVM Fanout 1
 - evrs:
     - MyPV-EVR1::
-        - titre: EVR1
+        - name: EVR1
         - description: EVR 1
     - MyPV-EVR2::
-        - titre: EVR2
+        - name: EVR2
         - description: EVR 2
     - MyPV-EVR3::
-        - titre: EVR3
+        - name: EVR3
         - description: EVR 3
