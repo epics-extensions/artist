@@ -47,9 +47,9 @@ If you have build the binary you can
 
 ## Usage
  ```
-usage: artist [-h] [-v {0,1,2,3,4,5}] [-f {md,wireviz}] [--add-io] inputFile outputPath
+usage: artist [-h] [-v {0,1,2,3,4,5}] [-f {md,wireviz,graphviz}] [--add-io] inputFile outputPath
 
-Script to serialize EPICS records to csv file
+Script to draw timing topology to defined format
 
 positional arguments:
   inputFile             File containing the PVList
@@ -59,7 +59,7 @@ options:
   -h, --help            show this help message and exit
   -v {0,1,2,3,4,5}, --verbosity {0,1,2,3,4,5}
                         decrease output verbosity. 5 (Critical), 4 (Error), 3 (Warning, default), 2 (Info), 1 (Debug)
-  -f {md,wireviz}, --format {md,wireviz}
+  -f {md,wireviz,graphviz}, --format {md,wireviz,graphviz}
                         Define which format for the output.
   --add-io              Add input/output of the EVR on the synoptics
  ```
@@ -67,9 +67,23 @@ options:
 ### Format 
 For the following list of Prefix in the file listPrefixDevices
 ```
-SL-TMG-TIM:TIM-EVM-1:
-SL-MPS-BDM:TIM-EVR-1:
-SL-MPS-SBCT:TIM-EVR-1:
+- evms:
+    - MyPV-EVMMaster::
+        - titre: EVMMASTER
+        - description: Master EVM 
+    - MyPV-EVMFanout1::
+        - titre: EVMFANOUT1
+        - description: EVM Fanout 1
+- evrs:
+    - MyPV-EVR1::
+        - titre: EVR1
+        - description: EVR 1
+    - MyPV-EVR2::
+        - titre: EVR2
+        - description: EVR 2
+    - MyPV-EVR3::
+        - titre: EVR3
+        - description: EVR 3
 ```
 
 #### Mermaid 
@@ -85,8 +99,11 @@ EVR SBCT]
 
 you can use https://mermaid.live to draw the mermaid result as a graph.
 
+#### Graphviz  
+You can also generate graphviz format https://graphviz.org/
+
 #### Wireviz 
 
-Now you can also generate wireviz format synoptic https://github.com/wireviz/WireViz
+You can also generate wireviz format synoptic https://github.com/wireviz/WireViz
 
 ⚠️ : Graphviz need to be installed in your computer, if you use the binary. No problem with poetry.
